@@ -63,10 +63,62 @@ $superheroes = [
   ], 
 ];
 
+
+
 ?>
 
-<ul>
-<?php foreach ($superheroes as $superhero): ?>
-  <li><?= $superhero['alias']; ?></li>
-<?php endforeach; ?>
-</ul>
+
+<?php 
+
+function getHeroData($superheroes, $data){
+    foreach($superheroes as $superhero):
+        if($data == strtolower($superhero['alias']) || $data == strtolower($superhero['name'])){
+            return $superhero;
+        }
+    endforeach;
+    return "Superhero not Found";  
+}
+
+function getList($superheroes){
+    $data = '';
+    $data .= "<ul>";
+    foreach ($superheroes as $superhero){
+        $data .= "<li>{$superhero['alias']}</li>";
+    }
+    $data .= "</ul>";
+    return $data;
+}
+
+function getHero($data, $superheroes){
+    $heroData = getHeroData($superheroes, strtolower($data));
+    return json_encode($heroData);
+}
+function processFormData($superheroes){
+    $data = trim(filter_input(INPUT_GET, 'query', FILTER_SANITIZE_STRING));
+    if($data == ''){
+        echo getList($superheroes);
+    }else{
+        $hero = getHero($data, $superheroes);
+        if ($hero != 'Superhero not Found'){
+            echo $hero;
+            //$alias = $hero['alias'];
+            //echo $alias;
+            //$name = $hero['name'];
+            ##echo "<li>$alias ($name)</li>";   
+            //$biography = $hero['biography'];
+            //$data = "";
+            //$data.="<h3>$alias</h3>";
+            //$data .= "<h4>A.K.A $name</h4>";
+            //$data .= "<p>$biography</p>";
+            //echo $data;
+        }else{
+            echo $hero;
+        }  
+        
+    }
+}
+
+processFormData($superheroes)
+    
+
+?>
